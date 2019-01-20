@@ -7,24 +7,30 @@
     <title>lucky wheel</title>
   </head>
   <style>
+
     .col-xs-12 {
       width: 100%;
     }
-    .vongxoay-img img:nth-child(1) {
+    .vongxoay img:nth-child(1) {
       position: relative;
       margin-top: 80px;
     }
-
-    .vongxoay-img img:nth-child(2) {
+    .vongxoay img:nth-child(2) {
       position: absolute;
       margin: 40px -173px;
     }
-
+    button{
+      margin-top: 30px;
+      margin-left: 140px;
+    }
     body {
       margin: 0;
       padding: 0;
     }
-
+    #wrap{
+      margin-left: 35%;
+      margin-top: 10%;
+    }
     .unlimit {
       transition: none;
       -webkit-animation: rotating 0.6s linear infinite;
@@ -35,7 +41,6 @@
     }
 
     @-webkit-keyframes rotating
-
     /*Safari and Chrome */ {
       to {
         -ms-transform: rotate(0deg);
@@ -73,12 +78,15 @@
     }
   </style>
   <body>
-    <div class="col-xs-12 col-sm-5 col-md-5 col-lg-5 vongxoay-img" id="vongxoaytichdiem">
-      <img src="vongquay.png" alt="" id="vongquay" /> <img src="kim.png" />
-    </div>
-    <div>
-      <button id="nutbam" onclick="quay()">Quay</button>
-      <p id="ketqua"></p>
+    <div id='wrap'>
+
+      <div class="col-xs-12 col-sm-5 col-md-5 col-lg-5 vongxoay" id="vongxoaytichdiem">
+        <img src="vongquay.png" alt="" id="vongquay" /> <img src="kim.png" />
+      </div>
+      <div>
+        <button id="nutbam" onclick="quay()">Quay</button>
+        <p id="ketqua"></p>
+      </div>
     </div>
     <audio id="tick"><source src="tick.mp3" type="audio/mpeg" /></audio> <audio id="clap"><source src="clap.mp3" type="audio/mpeg" /></audio>
     <audio id="crash"><source src="crash.mp3" type="audio/mpeg" /></audio> <audio id="sad"><source src="sad.mp3" type="audio/mpeg" /></audio>
@@ -160,17 +168,17 @@
         isBusying = true
         let response = {
           Successfully: true,
-          Name: Math.floor(Math.random() * 9) + 1
+          index: Math.floor(Math.random() * 9) + 1
         }
 
         if (response.Successfully) {
-          animate.setStopPoint({ id: response.Name })
+          animate.setStopPoint({ id: response.index })
           $('#ketqua').html('Đợi 1 tí đang quay .....')
           animate.play()
           setTimeout(function() {
             isBusying = false
             let messageResult = 'Bạn nhận được '
-            switch (response.Name) {
+            switch (response.index) {
               case 1:
                 messageResult = messageResult + '50 Vpoint'
                 document.getElementById('clap').play()
