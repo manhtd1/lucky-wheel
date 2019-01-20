@@ -1,238 +1,223 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>lucky wheel</title>
+  </head>
+  <style>
+    .col-xs-12 {
+      width: 100%;
+    }
+    .vongxoay-img img:nth-child(1) {
+      position: relative;
+      margin-top: 80px;
+    }
 
-<head>
-    <title>Lucky Wheel</title>
-    <style>
-        .circle {
-            position: relative;
-            border: 1px solid black;
-            padding: 0;
-            margin: 1em auto;
-            width: 20em;
-            height: 20em;
-            border-radius: 50%;
-            list-style: none;
-            overflow: hidden;
-            animation: spin 10s infinite;
+    .vongxoay-img img:nth-child(2) {
+      position: absolute;
+      margin: 40px -173px;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    .unlimit {
+      transition: none;
+      -webkit-animation: rotating 0.6s linear infinite;
+      -moz-animation: rotating 0.6s linear infinite;
+      -ms-animation: rotating 0.6s linear infinite;
+      -o-animation: rotating 0.6s linear infinite;
+      animation: rotating 0.6s linear infinite;
+    }
+
+    @-webkit-keyframes rotating
+
+    /*Safari and Chrome */ {
+      to {
+        -ms-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+      }
+
+      from {
+        -ms-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -webkit-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes rotating {
+      to {
+        -ms-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+      }
+
+      from {
+        -ms-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -webkit-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+  <body>
+    <div class="col-xs-12 col-sm-5 col-md-5 col-lg-5 vongxoay-img" id="vongxoaytichdiem">
+      <img src="vongquay.png" alt="" id="vongquay" /> <img src="kim.png" />
+    </div>
+    <div>
+      <button id="nutbam" onclick="quay()">Quay</button>
+      <p id="ketqua"></p>
+    </div>
+    <audio id="tick"><source src="tick.mp3" type="audio/mpeg" /></audio> <audio id="clap"><source src="clap.mp3" type="audio/mpeg" /></audio>
+    <audio id="crash"><source src="crash.mp3" type="audio/mpeg" /></audio> <audio id="sad"><source src="sad.mp3" type="audio/mpeg" /></audio>
+    <audio id="lakad"><source src="lakad matatag.mp3" type="audio/mpeg" /></audio>
+  </body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script>
+    // set hiệu ứng quay cho hình ảnh
+    let animate = {
+      el: '#vongquay',
+      stop_point: null,
+      stop_index: {
+        1: [0], //50 Vpoint
+        2: [30], //20 Vpoint
+        3: [60, 180, 300], //5 Vpoint
+        4: [90, 210], //90 - Mặt khóc , 210 - Mặt cười
+        5: [120], //40 Vpoint
+        6: [150], //10 Vpoint
+        7: [240], //30 Vpoint
+        8: [270], //10 Vpoint
+        9: [330] // Hoa
+      },
+      rotate_count: 5,
+      old_point: {
+        check: false,
+        value_old: null,
+        value_new: null
+      },
+
+      play: function() {
+        if (!this.stop_point) return
+        if (this.old_point.value_old == null) {
+          this.old_point.value_old = this.old_point.value_new
+        }
+        // $(this).css('-webkit-transform', 'rotate(' + this.old_point.value_old + 'deg)')
+        // $(this).css('-moz-transform', 'rotate(' + this.old_point.value_old + 'deg)')
+        $(this).css('transform', 'rotate(' + this.old_point.value_old + 'deg)')
+        let v_old = this.old_point.value_old
+        console.log(v_old) // giá trị điểm của lượt quay cũ
+
+        // custom animation
+        $(this.el).animate(
+          { transform: this.stop_point },
+          {
+            step: function(now, past) {
+              past.start = v_old
+              if (now >= v_old) {
+                $(this).css('transform', 'rotate(' + now + 'deg)')
+                // $(this).css('-webkit-transform', 'rotate(' + now + 'deg)')
+                // $(this).css('-moz-transform', 'rotate(' + now + 'deg)')
+              }
+            },
+            duration: 5000
+          },
+          'ease-out'
+        )
+      },
+      setStopPoint: function(params) {
+        if (this.stop_point != null) {
+          this.old_point.check = true
+        }
+        let arr_point = this.stop_index[params.id]
+        let valueArrPoint = arr_point[Math.floor(Math.random() * arr_point.length)]
+        console.log('Giá trị tọa độ : ' + valueArrPoint)
+        this.stop_point = this.rotate_count * 360 + valueArrPoint
+        if (this.old_point.check) {
+          this.old_point.value_old = this.old_point.value_new
+          this.old_point.value_new = valueArrPoint
+        } else {
+          this.old_point.value_old = 0
+          this.old_point.value_new = valueArrPoint
+        }
+      }
+    }
+    let isBusying = false // ngăn ko cho bấm quay khi vòng quay trước chưa kết thúc
+    //  thực hiện funciton
+    function quay() {
+      if (!isBusying) {
+        isBusying = true
+        let response = {
+          Successfully: true,
+          Name: Math.floor(Math.random() * 9) + 1
         }
 
-        li {
-            overflow: hidden;
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 50%;
-            height: 50%;
-            transform-origin: 0% 100%;
-        }
-
-        .text {
-            position: absolute;
-            left: -100%;
-            width: 200%;
-            height: 200%;
-            text-align: center;
-            -webkit-transform: skewY(60deg) rotate(15deg);
-            -ms-transform: skewY(60deg) rotate(15deg);
-            transform: skewY(60deg) rotate(15deg);
-            padding-top: 20px;
-        }
-
-        li:first-child {
-            -webkit-transform: rotate(0deg) skewY(-60deg);
-            -ms-transform: rotate(0deg) skewY(-60deg);
-            transform: rotate(0deg) skewY(-60deg);
-        }
-
-        li:nth-child(2) {
-            -webkit-transform: rotate(30deg) skewY(-60deg);
-            -ms-transform: rotate(30deg) skewY(-60deg);
-            transform: rotate(30deg) skewY(-60deg);
-        }
-
-        li:nth-child(3) {
-            -webkit-transform: rotate(60deg) skewY(-60deg);
-            -ms-transform: rotate(60deg) skewY(-60deg);
-            transform: rotate(60deg) skewY(-60deg);
-        }
-
-        li:nth-child(4) {
-            -webkit-transform: rotate(90deg) skewY(-60deg);
-            -ms-transform: rotate(90deg) skewY(-60deg);
-            transform: rotate(90deg) skewY(-60deg);
-        }
-
-        li:nth-child(5) {
-            -webkit-transform: rotate(120deg) skewY(-60deg);
-            -ms-transform: rotate(120deg) skewY(-60deg);
-            transform: rotate(120deg) skewY(-60deg);
-        }
-
-        li:nth-child(6) {
-            -webkit-transform: rotate(150deg) skewY(-60deg);
-            -ms-transform: rotate(150deg) skewY(-60deg);
-            transform: rotate(150deg) skewY(-60deg);
-        }
-
-        li:nth-child(7) {
-            -webkit-transform: rotate(180deg) skewY(-60deg);
-            -ms-transform: rotate(180deg) skewY(-60deg);
-            transform: rotate(180deg) skewY(-60deg);
-        }
-
-        li:nth-child(8) {
-            -webkit-transform: rotate(210deg) skewY(-60deg);
-            -ms-transform: rotate(210deg) skewY(-60deg);
-            transform: rotate(210deg) skewY(-60deg);
-        }
-
-        li:nth-child(9) {
-            -webkit-transform: rotate(240deg) skewY(-60deg);
-            -ms-transform: rotate(240deg) skewY(-60deg);
-            transform: rotate(240deg) skewY(-60deg);
-        }
-
-        li:nth-child(10) {
-            -webkit-transform: rotate(270deg) skewY(-60deg);
-            -ms-transform: rotate(270deg) skewY(-60deg);
-            transform: rotate(270deg) skewY(-60deg);
-        }
-
-        li:nth-child(11) {
-            -webkit-transform: rotate(300deg) skewY(-60deg);
-            -ms-transform: rotate(300deg) skewY(-60deg);
-            transform: rotate(300deg) skewY(-60deg);
-        }
-
-        li:nth-child(12) {
-            -webkit-transform: rotate(330deg) skewY(-60deg);
-            -ms-transform: rotate(330deg) skewY(-60deg);
-            transform: rotate(330deg) skewY(-60deg);
-        }
-
-        li:first-child .text {
-            background: green;
-
-        }
-
-        li:nth-child(2) .text {
-            background: tomato;
-
-        }
-
-        li:nth-child(3) .text {
-            background: aqua;
-
-        }
-
-        li:nth-child(4) .text {
-            background: yellow;
-
-        }
-
-        li:nth-child(5) .text {
-            background: orange;
-
-        }
-
-        li:nth-child(6) .text {
-            background: purple;
-
-        }
-
-        li:nth-child(7) .text {
-            background: cyan;
-
-        }
-
-        li:nth-child(8) .text {
-            background: brown;
-
-        }
-
-        li:nth-child(9) .text {
-            background: gray;
-
-        }
-
-        li:nth-child(10) .text {
-            background: pink;
-
-        }
-
-        li:nth-child(11) .text {
-            background: maroon;
-
-        }
-
-        li:nth-child(12) .text {
-            background: gold;
-
-        }
-
-        @keyframes spin {
-            100% {
-                -webkit-transform: rotate(360deg);
-                transform: rotate(360deg);
+        if (response.Successfully) {
+          animate.setStopPoint({ id: response.Name })
+          $('#ketqua').html('Đợi 1 tí đang quay .....')
+          animate.play()
+          setTimeout(function() {
+            isBusying = false
+            let messageResult = 'Bạn nhận được '
+            switch (response.Name) {
+              case 1:
+                messageResult = messageResult + '50 Vpoint'
+                document.getElementById('clap').play()
+                break
+              case 2:
+                messageResult = messageResult + '20 Vpoint'
+                document.getElementById('clap').play()
+                break
+              case 3:
+                messageResult = messageResult + '5 Vpoint'
+                document.getElementById('clap').play()
+                break
+              case 4:
+                messageResult = messageResult + '1 cái mặt khóc'
+                document.getElementById('sad').play()
+                break
+              case 5:
+                messageResult = messageResult + '40 Vpoint'
+                document.getElementById('clap').play()
+                break
+              case 6:
+                messageResult = messageResult + '10 Vpoint'
+                document.getElementById('clap').play()
+                break
+              case 7:
+                messageResult = messageResult + '30 Vpoint'
+                document.getElementById('clap').play()
+                break
+              case 8:
+                messageResult = messageResult + '10 Vpoint'
+                document.getElementById('clap').play()
+                break
+              case 9:
+                messageResult = messageResult + 'Giải độc cmn đắc'
+                document.getElementById('lakad').play()
+                break
+              default:
+                messageResult = 'Error!'
+                break
             }
+            $('#ketqua').html(messageResult)
+          }, 5000)
         }
-
-
-        @keyframes spin {
-
-            /* 0% {transform: rotate(30deg);} */
-            100% {
-                -webkit-transform: rotate(360deg);
-                transform: rotate(360deg);
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <ul class="circle">
-        <li>
-            <div class="text">1</div>
-        </li>
-        <li>
-            <div class="text">2</div>
-        </li>
-        <li>
-            <div class="text">3</div>
-        </li>
-        <li>
-            <div class="text">4</div>
-        </li>
-        <li>
-            <div class="text">5</div>
-        </li>
-        <li>
-            <div class="text">6</div>
-        </li>
-        <li>
-            <div class="text">7</div>
-        </li>
-        <li>
-            <div class="text">8</div>
-        </li>
-        <li>
-            <div class="text">9</div>
-        </li>
-        <li>
-            <div class="text">10</div>
-        </li>
-        <li>
-            <div class="text">11</div>
-        </li>
-        <li>
-            <div class="text">12</div>
-        </li>
-
-        <ul>
-</body>
-
+      }
+    }
+    $('body').click(function() {
+      document.getElementById('tick').play()
+    })
+  </script>
 </html>
-
-<!-- lucky-wheel
-vong quay may man
-Made by ndt94 & manhtd1 -->
